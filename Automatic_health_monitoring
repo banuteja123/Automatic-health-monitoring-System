@@ -1,0 +1,108 @@
+import datetime
+
+class Patient:
+    def __init__(self, name, age, heart_rate, blood_pressure, glucose_level, oxygen_level, temperature):
+        self.name = name
+        self.age = age
+        self.heart_rate = heart_rate
+        self.blood_pressure = blood_pressure
+        self.glucose_level = glucose_level
+        self.oxygen_level = oxygen_level
+        self.temperature = temperature
+        self.creation_time = datetime.datetime.now()
+
+    def check_health(self):
+        alerts = []
+        if not (60 <= self.heart_rate <= 100):
+            alerts.append(f"Abnormal Heart Rate: {self.heart_rate} bpm")
+        if not (90 <= self.blood_pressure <= 120):
+            alerts.append(f"Abnormal Blood Pressure: {self.blood_pressure} mmHg")
+        if not (70 <= self.glucose_level <= 140):
+            alerts.append(f"Abnormal Glucose Level: {self.glucose_level} mg/dL")
+        if not (95 <= self.oxygen_level <= 100):
+            alerts.append(f"Low Oxygen Level: {self.oxygen_level}%")
+        if not (36.5 <= self.temperature <= 37.5):
+            alerts.append(f"Abnormal Body Temperature: {self.temperature}°C")
+        
+        if alerts:
+            return f"ALERTS for {self.name}: " + ", ".join(alerts)
+        else:
+            return f"{self.name} is in good health."
+
+    def detailed_report(self):
+        return (
+            f"\n--- Detailed Report for {self.name} ---\n"
+            f"Age: {self.age}\n"
+            f"Heart Rate: {self.heart_rate} bpm\n"
+            f"Blood Pressure: {self.blood_pressure} mmHg\n"
+            f"Glucose Level: {self.glucose_level} mg/dL\n"
+            f"Oxygen Level: {self.oxygen_level}%\n"
+            f"Body Temperature: {self.temperature}°C\n"
+            f"Recorded at: {self.creation_time.strftime('%Y-%m-%d %H:%M:%S')}\n"
+        )
+
+def main():
+    patients = []
+
+    while True:
+        print("\n--- Automatic Health Monitoring System ---")
+        print("1. Add Patient Data")
+        print("2. View All Patients' Health Status")
+        print("3. View Detailed Report of a Patient")
+        print("4. Log Health Data to a File")
+        print("5. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            name = input("Enter patient name: ")
+            age = int(input("Enter patient age: "))
+            heart_rate = int(input("Enter heart rate (bpm): "))
+            blood_pressure = int(input("Enter blood pressure (mmHg): "))
+            glucose_level = int(input("Enter glucose level (mg/dL): "))
+            oxygen_level = int(input("Enter oxygen level (%): "))
+            temperature = float(input("Enter body temperature (°C): "))
+
+            patient = Patient(name, age, heart_rate, blood_pressure, glucose_level, oxygen_level, temperature)
+            patients.append(patient)
+            print(f"\nPatient {name} added successfully!")
+
+        elif choice == "2":
+            if not patients:
+                print("\nNo patients to display.")
+            else:
+                for patient in patients:
+                    print(f"\n{patient.check_health()}")
+
+        elif choice == "3":
+            if not patients:
+                print("\nNo patients to display.")
+            else:
+                name = input("Enter the patient's name for the detailed report: ")
+                found = False
+                for patient in patients:
+                    if patient.name == name:
+                        print(patient.detailed_report())
+                        found = True
+                        break
+                if not found:
+                    print(f"\nNo patient found with the name {name}.")
+
+        elif choice == "4":
+            if not patients:
+                print("\nNo patients to log.")
+            else:
+                with open("health_log.txt", "a") as log_file:
+                    for patient in patients:
+                        log_file.write(patient.detailed_report())
+                print("\nHealth data logged to health_log.txt successfully!")
+
+        elif choice == "5":
+            print("Exiting the system. Goodbye!")
+            break
+
+        else:
+            print("Invalid choice, please try again.")
+
+if __name__ == "__main__":
+    main()
